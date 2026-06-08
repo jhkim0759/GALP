@@ -1,36 +1,48 @@
-# GALP — Geometry-Aware Layout Prediction
+# 📐 GALP — Geometry-Aware Layout Prediction
 
-GALP predicts a coarse room layout from a set of per-object masks and their textured GLBs. Given the segmented objects produced earlier in Stage 1, it outputs a scene pointmap, a floor polygon, and an initial per-object placement (position + orientation). In SceneConductor this is the **final step of Stage 1** — its `layout_prediction.json` (plus the accompanying `.glb`) seeds the Stage 2 environment build and Stage 3 refinement.
+> Geometry-Aware Layout Prediction (GALP) is a core submodule of
+> SceneConductor that predicts an initial 3D scene layout from segmented
+> object masks and corresponding GLB assets.
 
-## Vendored, not a submodule
+🔗 **Project:** https://github.com/jhkim0759/SceneConductor
 
-This directory is committed to the repository as plain files. It is **not** a git submodule — there is no entry for it in `<repo>/.gitmodules`, and `git submodule update` does nothing for it. After a plain `git clone`, the code here is already present.
+---
 
-## Layout
+## ✨ Overview
 
+GALP takes the segmented objects produced in **Stage 1** and predicts:
+
+* 🗺️ **Scene Pointmap**
+* 🏠 **Floor Polygon**
+* 📦 **Initial Object Placements**
+
+  * Position
+  * Orientation
+
+Within the SceneConductor pipeline, GALP serves as the **final step of Stage 1**.
+
+The generated outputs:
+
+```text
+layout_prediction.json
+layout_prediction.glb
 ```
-GALP/
-├── demo.py            # entry script driven by the pipeline
-├── configs/           # inference configs (e.g. mp8_nt512.yaml)
-├── src/               # datasets, sam3d_objects model backbone, utils
-├── scripts/           # helper scripts
-├── assets/            # 0000000 — a bundled sample
-└── checkpoints/       # placeholder dir only (real weights live elsewhere)
-```
 
-## How it is invoked
+---
 
-Users do **not** run `demo.py` directly. The pipeline calls GALP through
-`.claude/skills/stage1-initialize-scene/src/run_galp.py`, which resolves this
-directory via the `galp_repo: ./submodules/GALP` key in `DIRECTORYS.yaml` and
-executes the model inside the `scenegen` conda env.
+## 📂 Model Checkpoints
 
-## Checkpoints
+The `checkpoints/` directory in this repository is provided as a placeholder.
 
-The `checkpoints/` folder here is an empty placeholder. The real GALP weights
-live under `<repo>/checkpoints/galp/`:
+All pretrained GALP checkpoints can be downloaded from:
 
-```
+🤗 **Hugging Face**
+
+https://huggingface.co/WopperSet/SceneConductor
+
+Expected structure:
+
+```text
 checkpoints/galp/
 ├── checkpoint.pt
 ├── pipeline.yaml
@@ -38,5 +50,120 @@ checkpoints/galp/
 └── condition_embedder.ckpt
 ```
 
-See the **Model Checkpoints** section of the main `<repo>/README.md` for the
-full download layout and total checkpoint footprint.
+For detailed checkpoint organization and download instructions, please refer to the main SceneConductor repository.
+
+---
+
+## 🛠️ Environment Setup
+
+Environment creation is managed through YAML configuration files.
+
+```bash
+conda env create -f environment.yaml
+conda activate galp
+```
+
+Or update the provided YAML according to your system configuration.
+
+---
+
+## 🚀 Quick Start
+
+Run GALP on a sample scene:
+
+```bash
+python demo.py \
+    --scene assets/0000000 \
+    --ckpt checkpoints/galp/checkpoint.pt \
+    --output output/demo_scene.glb \
+    --gpu 0
+```
+
+### 📥 Input
+
+```text
+assets/0000000/
+├── object_masks/
+├── object_glbs/
+└── metadata.json
+```
+
+### 📤 Output
+
+```text
+output/
+├── demo_scene.glb
+└── layout_prediction.json
+```
+
+---
+
+## 🗄️ Dataset
+
+🚧 **Coming Soon**
+
+Dataset preparation and download instructions will be released in a future update.
+
+Planned support includes:
+
+* 🪑 3D-FUTURE
+* 🏢 ScanNet
+* 🖼️ COCO
+
+Stay tuned!
+
+---
+
+## 🎓 Training
+
+Modify the training scripts according to your environment:
+
+* GPU configuration
+* Number of workers
+* Dataset paths
+* Batch size
+* Training hyperparameters
+
+### Initial Layout Training
+
+```bash
+sh script/train_init.sh
+```
+
+### Post Refinement Training
+
+```bash
+sh script/train_post.sh
+```
+
+---
+
+## 📁 Repository Structure
+
+```text
+GALP/
+├── assets/
+├── checkpoints/
+├── configs/
+├── script/
+├── demo.py
+└── README.md
+```
+
+---
+
+## 🙏 Acknowledgements
+
+This project builds upon several outstanding open-source works:
+
+- [SceneGen](https://github.com/mengmouxu/scenegen)
+- [PartCrafter](https://github.com/wgsxm/PartCrafter)
+- [SAM3D](https://github.com/facebookresearch/sam-3d-objects)
+
+We thank the authors for open-sourcing their work.
+
+## 📜 Citation
+
+If you find GALP useful for your research, please consider citing the corresponding SceneConductor paper.
+
+⭐ Star the repository if it helps your work!
