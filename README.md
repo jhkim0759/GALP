@@ -11,13 +11,9 @@
 ## ✨ Overview
 
 GALP takes the segmented objects produced in **Stage 1** and predicts:
-
-* 🗺️ **Scene Pointmap**
-* 🏠 **Floor Polygon**
-* 📦 **Initial Object Placements**
-
-  * Position
-  * Orientation
+<p align="center">
+    <img width="95%" alt="pipeline" src="./assets/pipeline.png">
+</p>
 
 Within the SceneConductor pipeline, GALP serves as the **final step of Stage 1**.
 
@@ -40,6 +36,16 @@ All pretrained GALP checkpoints can be downloaded from:
 
 https://huggingface.co/WopperSet/SceneConductor
 
+```bash
+from huggingface_hub import snapshot_download
+
+local_dir = snapshot_download(
+    repo_id="WopperSet/SceneConductor",
+    allow_patterns="checkpoints/*",
+    local_dir="./checkpoints"
+)
+```
+
 Expected structure:
 
 ```text
@@ -59,8 +65,7 @@ For detailed checkpoint organization and download instructions, please refer to 
 Environment creation is managed through YAML configuration files.
 
 ```bash
-conda env create -f environment.yaml
-conda activate galp
+./setup.sh
 ```
 
 Or update the provided YAML according to your system configuration.
@@ -72,11 +77,10 @@ Or update the provided YAML according to your system configuration.
 Run GALP on a sample scene:
 
 ```bash
-python demo.py \
-    --scene assets/0000000 \
-    --ckpt checkpoints/galp/checkpoint.pt \
-    --output output/demo_scene.glb \
-    --gpu 0
+python demo.py --scene assets/0000000 \
+                --ckpt  checkpoints/checkpoint.pt \
+                --output output/demo_scene.glb \
+                --gpu 0
 ```
 
 ### 📥 Input
